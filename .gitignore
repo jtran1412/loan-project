@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+*.pyo
+*.pyd
+.Python
+.env
+.venv
+venv/
+basicpitch-env/
+
+# Node
+node_modules/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Misc
+*.sqlite3
+*.db
+
+# Ignore build artifacts
+frontend/build/
+frontend/dist/
+
+# Ignore Docker
+**/tmp/
+**/logs/ 

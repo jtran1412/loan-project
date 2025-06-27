@@ -1,0 +1,45 @@
+name: AWS Deploy
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: us-east-1
+      PROJECT_NAME: affirm-loan
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build, tag, and push backend image
+        run: |
+          docker build -t ${{ env.PROJECT_NAME }}-backend:latest ./backend
+          docker tag ${{ env.PROJECT_NAME }}-backend:latest ${{ steps.login-ecr.outputs.registry }}/${{ env.PROJECT_NAME }}-backend:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.PROJECT_NAME }}-backend:latest
+      - name: Build, tag, and push frontend image
+        run: |
+          docker build -t ${{ env.PROJECT_NAME }}-frontend:latest ./frontend
+          docker tag ${{ env.PROJECT_NAME }}-frontend:latest ${{ steps.login-ecr.outputs.registry }}/${{ env.PROJECT_NAME }}-frontend:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.PROJECT_NAME }}-frontend:latest
+      - name: Build, tag, and push etl image
+        run: |
+          docker build -t ${{ env.PROJECT_NAME }}-etl:latest ./automation
+          docker tag ${{ env.PROJECT_NAME }}-etl:latest ${{ steps.login-ecr.outputs.registry }}/${{ env.PROJECT_NAME }}-etl:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.PROJECT_NAME }}-etl:latest
+      - name: Update ECS backend service
+        run: |
+          aws ecs update-service --cluster ${{ env.PROJECT_NAME }}-cluster --service ${{ env.PROJECT_NAME }}-backend --force-new-deployment
+      - name: Update ECS frontend service
+        run: |
+          aws ecs update-service --cluster ${{ env.PROJECT_NAME }}-cluster --service ${{ env.PROJECT_NAME }}-frontend --force-new-deployment
+      - name: Update ECS etl service
+        run: |
+          aws ecs update-service --cluster ${{ env.PROJECT_NAME }}-cluster --service ${{ env.PROJECT_NAME }}-etl --force-new-deployment 
