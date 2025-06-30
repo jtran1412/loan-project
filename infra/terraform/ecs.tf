@@ -43,6 +43,43 @@ resource "aws_ecs_task_definition" "backend" {
   ])
 }
 
+# --- ALB for backend service ---
+resource "aws_lb" "backend" {
+  name               = "${var.project_name}-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.ecs.id]
+  subnets            = aws_subnet.public[*].id
+}
+
+resource "aws_lb_target_group" "backend" {
+  name        = "${var.project_name}-tg"
+  port        = 8000
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.main.id
+  target_type = "ip"
+  health_check {
+    path                = "/"
+    protocol            = "HTTP"
+    matcher             = "200-399"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+}
+
+resource "aws_lb_listener" "backend" {
+  load_balancer_arn = aws_lb.backend.arn
+  port              = 80
+  protocol          = "HTTP"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.backend.arn
+  }
+}
+
+# --- Update ECS backend service to use ALB ---
 resource "aws_ecs_service" "backend" {
   name            = "${var.project_name}-backend"
   cluster         = aws_ecs_cluster.main.id
@@ -54,7 +91,12 @@ resource "aws_ecs_service" "backend" {
     security_groups  = [aws_security_group.ecs.id]
     assign_public_ip = true
   }
-  depends_on = [aws_db_instance.main]
+  load_balancer {
+    target_group_arn = aws_lb_target_group.backend.arn
+    container_name   = "backend"
+    container_port   = 8000
+  }
+  depends_on = [aws_db_instance.main, aws_lb_listener.backend]
 }
 
 # Repeat for frontend and etl (simplified, no secrets needed)

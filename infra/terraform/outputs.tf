@@ -24,4 +24,9 @@ output "ecr_frontend_url" {
 
 output "ecr_etl_url" {
   value = aws_ecr_repository.etl.repository_url
+}
+
+output "alb_dns_name" {
+  value = aws_lb.backend.dns_name
+  description = "The DNS name of the Application Load Balancer for the backend."
 } 
