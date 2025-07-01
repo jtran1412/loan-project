@@ -11,9 +11,11 @@ export const DealCreateForm: React.FC<DealCreateFormProps> = ({ onDealAdded }) =
   const [rate, setRate] = React.useState('');
   const [amount, setAmount] = React.useState('');
 
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch('http://localhost:8000/deals/', {
+    await fetch(`${BACKEND_URL}/deals/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

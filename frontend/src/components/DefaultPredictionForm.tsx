@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Box, Button, FormControl, FormLabel, NumberInput, NumberInputField, Text } from '@chakra-ui/react';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+
 export const DefaultPredictionForm: React.FC = () => {
   const [amount, setAmount] = React.useState('');
   const [term, setTerm] = React.useState('');
@@ -12,7 +14,7 @@ export const DefaultPredictionForm: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setProb(null);
-    const res = await fetch('http://localhost:8000/predict_default/', {
+    const res = await fetch(`${BACKEND_URL}/predict_default/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
