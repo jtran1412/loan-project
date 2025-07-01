@@ -5,6 +5,8 @@ interface LoanUploadProps {
   onLoanAdded: () => void;
 }
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+
 export const LoanUpload: React.FC<LoanUploadProps> = ({ onLoanAdded }) => {
   const [amount, setAmount] = React.useState('');
   const [term, setTerm] = React.useState('');
@@ -12,7 +14,7 @@ export const LoanUpload: React.FC<LoanUploadProps> = ({ onLoanAdded }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch('http://localhost:8000/loans/', {
+    await fetch(`${BACKEND_URL}/loans/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
