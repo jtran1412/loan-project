@@ -1,30 +1,30 @@
 # Affirm Loan Performance Analyzer & Funding Optimizer
 
 ## Section 1: Loan Management
-Input:
+### Input:
 - Amount: Loan amount in dollars (e.g., 1000)
 - Term: Loan duration in months (e.g., 12)
 - Rate: Interest rate as decimal (e.g., 0.15 for 15%)
-Output:
+### Output:
 - Loan Table: Shows all loans with their status, creation date, and default status
 - Performance Analytics: Visual representation of loan portfolio
 
 ## Section 2: Deal Structuring
-Input:
+### Input:
 - Name: Deal identifier (e.g., "Q1 2024 Senior Funding")
 - Tranche: Deal type (e.g., "Senior", "Mezzanine", "Subordinate")
 - Rate: Funding rate as decimal (e.g., 0.08 for 8%)
 - Amount: Funding amount in dollars (e.g., 100000)
-Output:
+### Output:
 - Deal Table: Shows all structured deals with pricing and terms
 - Risk Assessment: Analysis of deal structure and profitability
 
 ## Section 3: ML Default Prediction
-Input:
+### Input:
 - Amount: Loan amount to analyze (e.g., 1500)
 - Term: Loan term in months (e.g., 18)
 - Rate: Interest rate as decimal (e.g., 0.20)
-Output:
+### Output:
 - Default Probability: Percentage chance the loan will default (e.g., 23.45%)
 - Risk Score: ML-generated risk assessment
 
